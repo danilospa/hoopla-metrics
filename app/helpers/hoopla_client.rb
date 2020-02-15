@@ -14,7 +14,11 @@ class HooplaClient
     @@hoopla_client_singleton ||= HooplaClient.new
   end
 
-  def get(relative_url, options)
+  def metrics
+    self.get('/metrics')
+  end
+
+  def get(relative_url, options = nil)
     response = client.get(relative_url, headers: options)
     if response.status == 200
       JSON.parse(response.body)

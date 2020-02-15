@@ -54,4 +54,8 @@ Rails.application.routes.draw do
   #     # (app/controllers/admin/products_controller.rb)
   #     resources :products
   #   end
+  #
+  root 'metrics#index'
+
+  resources :metrics, only: :index
 end
