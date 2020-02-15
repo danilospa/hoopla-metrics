@@ -49,3 +49,5 @@ group :development do
   gem 'spring'
 end
 
+
+gem 'pry', '0.12.2'
