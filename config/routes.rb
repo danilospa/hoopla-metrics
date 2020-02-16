@@ -58,6 +58,6 @@ Rails.application.routes.draw do
   root 'metrics#index'
 
   resources :metrics, only: :index do
-    resources :metric_values, only: [:index, :new, :create, :show, :update]
+    resources :values, controller: :metric_values, only: [:index, :new, :create, :show, :update]
   end
 end

@@ -1,5 +1,5 @@
 <h1>Add Metric Value</h1>
-<%= form_tag(metric_metric_values_path) do %>
+<%= form_tag(metric_values_path) do %>
   <%= text_field_tag(:value, nil) %>
   <%= hidden_field_tag('owner[kind]', @owner[:kind]) %>
   <%= hidden_field_tag('owner[href]', @owner[:href]) %>
