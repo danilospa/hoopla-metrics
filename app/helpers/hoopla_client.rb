@@ -25,15 +25,31 @@ class HooplaClient
     get(METRIC_VALUES_PATH.gsub(':ID', metric_id))
   end
 
+  def metric_value(metric_id, id)
+    get("#{metric_values_path(metric_id)}/#{id}")
+  end
+
+  def update_metric_value(metric_id, id, metric_value)
+    put("#{metric_values_path(metric_id)}/#{id}", metric_value)
+  end
+
   def users
     get(USERS_PATH)
   end
 
-  def get(relative_url, options = nil)
-    response = client.get(relative_url, headers: options)
+  def get(relative_url, headers = nil)
+    response = client.get(relative_url, headers)
     if response.status == 200
-      body = JSON.parse(response.body)
-      body.is_a?(Array) ? body.map(&:deep_symbolize_keys) : body.deep_symbolize_keys
+      extract_body(response)
+    else
+      raise StandardError('Invalid response from ')
+    end
+  end
+
+  def put(relative_url, data, headers = {})
+    response = client.put(relative_url, data.to_json, headers.merge('content-type':'application/vnd.hoopla.metric-value+json'))
+    if response.status == 200
+      extract_body(response)
     else
       raise StandardError('Invalid response from ')
     end
@@ -111,5 +127,14 @@ class HooplaClient
   def descriptor
     descriptor_url = PUBLIC_API_ENDPOINT
     @descriptor ||= self.get(descriptor_url, {'Accept' => 'application/vnd.hoopla.api-descriptor+json'})
+  end
+
+  def extract_body(response)
+    body = JSON.parse(response.body)
+    body.is_a?(Array) ? body.map(&:deep_symbolize_keys) : body.deep_symbolize_keys
+  end
+
+  def metric_values_path(metric_id)
+    METRIC_VALUES_PATH.gsub(':ID', metric_id)
   end
 end

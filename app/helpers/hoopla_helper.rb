@@ -1,5 +1,9 @@
 module HooplaHelper
-  def extract_id_from_metrics_url(url)
-    url.gsub("#{HooplaClient::PUBLIC_API_ENDPOINT}#{HooplaClient::METRICS_PATH}/", '')
+  def merge_id(entity)
+    entity.merge(id: extract_id_from_url(entity[:href]))
+  end
+
+  def extract_id_from_url(url)
+    url.split('/').last
   end
 end

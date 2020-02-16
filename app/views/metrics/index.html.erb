@@ -1,6 +1,6 @@
 <h1>Metrics</h1>
 <% @metrics.each do |metric| %>
   <div>
-    <%= link_to metric[:name], "/metrics/#{metric[:id]}/values" %>
+    <%= link_to metric[:name], "/metrics/#{metric[:id]}/metric_values" %>
   </div>
 <% end %>

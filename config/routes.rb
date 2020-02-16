@@ -58,8 +58,6 @@ Rails.application.routes.draw do
   root 'metrics#index'
 
   resources :metrics, only: :index do
-    member do
-      get :values, to: 'metric_values#index'
-    end
+    resources :metric_values, only: [:index, :show, :update]
   end
 end

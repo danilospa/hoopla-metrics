@@ -1,8 +1,10 @@
 <h1>Metric Values</h1>
 <% @users.each do |user| %>
-  <div>
-    <%= "#{user[:first_name]} #{user[:last_name]}" %>
-    - Value:
-    <%= user[:metric_value] %>
-  </div>
+  <%= link_to user[:metric_value] ? metric_metric_value_path(params[:metric_id], user[:metric_value][:id]) : '/' do %>
+    <div>
+      <%= "#{user[:first_name]} #{user[:last_name]}" %>
+      - Value:
+      <%= user[:metric_value] ? user[:metric_value][:value] : 0 %>
+    </div>
+  <% end %>
 <% end %>
