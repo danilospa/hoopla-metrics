@@ -5,6 +5,9 @@ class HooplaClient
   CLIENT_ID = ENV['CLIENT_ID']
   CLIENT_SECRET = ENV['CLIENT_SECRET']
   PUBLIC_API_ENDPOINT = 'https://api.hoopla.net'
+  METRICS_PATH = '/metrics'
+  METRIC_VALUES_PATH = "#{METRICS_PATH}/:ID/values"
+  USERS_PATH = '/users'
 
   def initialize
     descriptor
@@ -15,13 +18,22 @@ class HooplaClient
   end
 
   def metrics
-    self.get('/metrics')
+    get(METRICS_PATH)
+  end
+
+  def metric_values(metric_id)
+    get(METRIC_VALUES_PATH.gsub(':ID', metric_id))
+  end
+
+  def users
+    get(USERS_PATH)
   end
 
   def get(relative_url, options = nil)
     response = client.get(relative_url, headers: options)
     if response.status == 200
-      JSON.parse(response.body)
+      body = JSON.parse(response.body)
+      body.is_a?(Array) ? body.map(&:deep_symbolize_keys) : body.deep_symbolize_keys
     else
       raise StandardError('Invalid response from ')
     end
