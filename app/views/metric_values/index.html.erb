@@ -1,6 +1,6 @@
 <h1>Metric Values</h1>
 <% @users.each do |user| %>
-  <%= link_to user[:metric_value] ? metric_metric_value_path(params[:metric_id], user[:metric_value][:id]) : '/' do %>
+  <%= link_to user[:metric_value] ? metric_metric_value_path(@metric_id, user[:metric_value][:id]) : new_metric_metric_value_path(owner: { kind: 'user', href: user[:href] }) do %>
     <div>
       <%= "#{user[:first_name]} #{user[:last_name]}" %>
       - Value:

@@ -29,6 +29,10 @@ class HooplaClient
     get("#{metric_values_path(metric_id)}/#{id}")
   end
 
+  def create_metric_value(metric_id, metric_value)
+    post(metric_values_path(metric_id), metric_value)
+  end
+
   def update_metric_value(metric_id, id, metric_value)
     put("#{metric_values_path(metric_id)}/#{id}", metric_value)
   end
@@ -39,20 +43,17 @@ class HooplaClient
 
   def get(relative_url, headers = nil)
     response = client.get(relative_url, headers)
-    if response.status == 200
-      extract_body(response)
-    else
-      raise StandardError('Invalid response from ')
-    end
+    parse_response(response)
+  end
+
+  def post(relative_url, data, headers = {})
+    response = client.post(relative_url, data.to_json, headers.merge('content-type':'application/vnd.hoopla.metric-value+json'))
+    parse_response(response)
   end
 
   def put(relative_url, data, headers = {})
     response = client.put(relative_url, data.to_json, headers.merge('content-type':'application/vnd.hoopla.metric-value+json'))
-    if response.status == 200
-      extract_body(response)
-    else
-      raise StandardError('Invalid response from ')
-    end
+    parse_response(response)
   end
 
   def get_relative_url(link)
@@ -116,22 +117,18 @@ class HooplaClient
     end
   end
 
-  def parse_response(verb, url, response)
+  def parse_response(response)
     if [200, 201].include? response.status
-      JSON.parse(response.body)
+      body = JSON.parse(response.body)
+      body.is_a?(Array) ? body.map(&:deep_symbolize_keys) : body.deep_symbolize_keys
     else
-      raise StandardError('Invalid response from #{verb} #{url}: #{response.status}: #{response.body')
+      raise StandardError('Invalid response: #{response.status}: #{response.body')
     end
   end
 
   def descriptor
     descriptor_url = PUBLIC_API_ENDPOINT
     @descriptor ||= self.get(descriptor_url, {'Accept' => 'application/vnd.hoopla.api-descriptor+json'})
-  end
-
-  def extract_body(response)
-    body = JSON.parse(response.body)
-    body.is_a?(Array) ? body.map(&:deep_symbolize_keys) : body.deep_symbolize_keys
   end
 
   def metric_values_path(metric_id)
